@@ -1,5 +1,9 @@
 package org.example;
 
+//package org.example;
+
+import org.example.Database.clientdata;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,13 +11,21 @@ import java.awt.event.ActionListener;
 
 public class ATMGUI {
 
+    private String loggedInCardNumber;
+
     public ATMGUI() {
-        // Create frame for the ATM GUI
+        // Create the frame for the ATM GUI
         JFrame frame = new JFrame("ATM - NUMETRO BANK");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
         frame.setLocationRelativeTo(null); // Center the window
 
+        // Call the method to display the main menu
+        showMainMenu(frame);
+    }
+
+    // Method to display the main menu
+    private void showMainMenu(JFrame frame) {
         // Create the main panel with a BorderLayout
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
@@ -53,28 +65,19 @@ public class ATMGUI {
         menuPanel.add(transactionsButton);
         menuPanel.add(exitButton);
 
-        // Add action listeners to handle button clicks
+        // Add action listener for login button
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "You selected Login");
-                // Call the login method logic here (to be implemented later)
+                showLoginScreen(frame);
             }
         });
 
+        // Add action listener for signup button
         signupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "You selected Signup");
-                // Call the signup method logic here (to be implemented later)
-            }
-        });
-
-        transactionsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "You selected Transactions");
-                // Call the transactions menu logic here (to be implemented later)
+                showSignupScreen(frame); // Show the signup screen
             }
         });
 
@@ -91,10 +94,146 @@ public class ATMGUI {
         panel.add(taglineLabel, BorderLayout.CENTER);
         panel.add(menuPanel, BorderLayout.SOUTH);
 
-        // Add the panel to the frame
+        // Add the panel to the frame and make it visible
+        frame.getContentPane().removeAll(); // Clear the frame content
         frame.add(panel);
-
-        // Make the frame visible
+        frame.revalidate();
+        frame.repaint();
         frame.setVisible(true);
+    }
+
+    // Method to show the signup screen
+    private void showSignupScreen(JFrame frame) {
+        JPanel signupPanel = new JPanel(new GridLayout(6, 2, 10, 10)); // 6 rows, 2 columns
+
+        // Create labels and text fields for user information
+        JLabel nameLabel = new JLabel("Name:");
+        JTextField nameField = new JTextField();
+        JLabel surnameLabel = new JLabel("Surname:");
+        JTextField surnameField = new JTextField();
+        JLabel emailLabel = new JLabel("Email:");
+        JTextField emailField = new JTextField();
+        JLabel pinLabel = new JLabel("Set a 4-digit PIN:");
+        JPasswordField pinField = new JPasswordField();
+        JLabel verifyPinLabel = new JLabel("Verify PIN:");
+        JPasswordField verifyPinField = new JPasswordField();
+
+        // Create the signup button
+        JButton signupButton = new JButton("Signup");
+
+        // Add components to the signup panel
+        signupPanel.add(nameLabel);
+        signupPanel.add(nameField);
+        signupPanel.add(surnameLabel);
+        signupPanel.add(surnameField);
+        signupPanel.add(emailLabel);
+        signupPanel.add(emailField);
+        signupPanel.add(pinLabel);
+        signupPanel.add(pinField);
+        signupPanel.add(verifyPinLabel);
+        signupPanel.add(verifyPinField);
+        signupPanel.add(new JLabel()); // Placeholder
+        signupPanel.add(signupButton);
+
+        // Add action listener to handle signup logic
+        signupButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = nameField.getText().trim();
+                String surname = surnameField.getText().trim();
+                String email = emailField.getText().trim();
+                String pin = new String(pinField.getPassword()).trim();
+                String verifyPin = new String(verifyPinField.getPassword()).trim();
+
+                // Perform signup validation and user creation logic
+                if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || pin.isEmpty() || verifyPin.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (!pin.equals(verifyPin)) {
+                    JOptionPane.showMessageDialog(frame, "PINs do not match. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                User user = new User();
+                user.setName(name);
+                user.setSurname(surname);
+                user.setEmail(email);
+                user.setPin(pin);
+                // Generate a card number (you may have your logic here)
+                String cardNumber = generateCardNumber();
+                user.setCardNumber(cardNumber);
+
+                // Add new user to the database
+                clientdata.createDatabase(user); // Assuming this method creates the user in the database
+
+                JOptionPane.showMessageDialog(frame, "Signup successful! Your card number is: " + cardNumber, "Success", JOptionPane.INFORMATION_MESSAGE);
+                showMainMenu(frame); // Return to the main menu
+            }
+        });
+
+        // Set up the frame content for the signup screen
+        frame.getContentPane().removeAll(); // Clear the frame content
+        frame.add(signupPanel);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+    // Method to generate a new card number (you can implement your own logic)
+    private String generateCardNumber() {
+        // Generate a random 16-digit card number as a placeholder
+        return String.valueOf((long) (Math.random() * 10000000000000000L));
+    }
+
+    // Method to show the login screen
+    private void showLoginScreen(JFrame frame) {
+        JPanel loginPanel = new JPanel(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns
+
+        // Create labels and text fields for card number and PIN
+        JLabel cardNumberLabel = new JLabel("Card Number:");
+        JTextField cardNumberField = new JTextField();
+        JLabel pinLabel = new JLabel("PIN:");
+        JPasswordField pinField = new JPasswordField();
+
+        // Create the login button
+        JButton loginButton = new JButton("Login");
+
+        // Add components to the login panel
+        loginPanel.add(cardNumberLabel);
+        loginPanel.add(cardNumberField);
+        loginPanel.add(pinLabel);
+        loginPanel.add(pinField);
+        loginPanel.add(new JLabel()); // Placeholder
+        loginPanel.add(loginButton);
+
+        // Add action listener to handle login logic
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cardNumber = cardNumberField.getText().trim();
+                String pin = new String(pinField.getPassword()).trim();
+
+                if (cardNumber.isEmpty() || pin.isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Card number or PIN cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Validate login using clientdata.isValidLogin
+                    boolean isValid = clientdata.isValidLogin(cardNumber, pin);
+                    if (isValid) {
+                        loggedInCardNumber = cardNumber; // Store logged-in card number
+                        JOptionPane.showMessageDialog(frame, "Login successful! Welcome to your account.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        // Proceed to transactions or other functionalities (to be implemented)
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Invalid login details. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Set up the frame content for the login screen
+        frame.getContentPane().removeAll(); // Clear the frame content
+        frame.add(loginPanel);
+        frame.revalidate();
+        frame.repaint();
     }
 }

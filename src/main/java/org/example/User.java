@@ -6,7 +6,7 @@ public class User {
     public String name;
     public String surname;
     public String email;
-    public int cardNumber; // Uncommented
+    public String cardNumber; // Change to String
     public String pin;
     public boolean balance;
     public String transactionHistory;
@@ -15,7 +15,7 @@ public class User {
 
     // Generate the card number when the User object is created
     public User() {
-        this.cardNumber = Integer.parseInt(generateCardNumber(cardNumberLength));
+        this.cardNumber = generateCardNumber(cardNumberLength); // Directly store as String
     }
 
     // Generate a random card number
@@ -40,11 +40,11 @@ public class User {
         this.verifypin = verifypin;
     }
 
-    public int getCardNumber() {
+    public String getCardNumber() { // Update return type to String
         return cardNumber;
     }
 
-    public void setCardNumber(int cardNumber) {
+    public void setCardNumber(String cardNumber) { // Update parameter type to String
         this.cardNumber = cardNumber;
     }
 
@@ -67,15 +67,19 @@ public class User {
     public String getTransactionHistory() {
         return transactionHistory;
     }
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-    public String getSurname(){
+
+    public String getSurname() {
         return surname;
     }
-    public String getEmail(){
+
+    public String getEmail() {
         return email;
     }
+
     public void setTransactionHistory(String transactionHistory) {
         this.transactionHistory = transactionHistory;
     }
@@ -85,14 +89,15 @@ public class User {
     }
 
     public void setSurname(String surname) {
-        this.surname=surname;
+        this.surname = surname;
     }
 
     public void setEmail(String email) {
-        this.email=email;
+        this.email = email;
     }
+
     public String getUserDetails() {
-        return String.format("Name: %s\nSurname: %s\nEmail: %s\nPIN: %d\nCard Number: %d",
-                name, surname, email, pin, cardNumber);
+        return String.format("Name: %s\nSurname: %s\nEmail: %s\nPIN: %s\nCard Number: %s",
+                name, surname, email, pin, cardNumber); // Update format specifier for cardNumber
     }
 }
