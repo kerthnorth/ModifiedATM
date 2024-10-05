@@ -385,7 +385,7 @@ import org.example.Database.clientdata;
 import java.util.Scanner;
 
 public class ATMMenu {
-    private ATMService atmService; // Initialize this later after login
+    public ATMService atmService; // Initialize this later after login
     private boolean isLoggedIn = false;
     private String loggedInCardNumber = null;
     static Transaction deposit = new Transaction();// Store the card number of the logged-in user

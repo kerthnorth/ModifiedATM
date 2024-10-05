@@ -11,9 +11,12 @@ import java.awt.event.ActionListener;
 public class ATMGUI {
 
     private String loggedInCardNumber;
+    public ATMService atmService;
+    static Transaction deposit = new Transaction();
 
     public ATMGUI() {
         // Create the frame for the ATM GUI
+//        this.atmService = atmService;
         JFrame frame = new JFrame("ATM - NUMETRO BANK");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
@@ -79,6 +82,18 @@ public class ATMGUI {
                 showSignupScreen(frame); // Show the signup screen
             }
         });
+        // Add action listener for transactions button
+        transactionsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (loggedInCardNumber == null) {
+                    JOptionPane.showMessageDialog(frame, "You need to log in first!", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                showTransactionMenu(frame);
+            }
+        });
+
 
         exitButton.addActionListener(new ActionListener() {
             @Override
@@ -188,6 +203,7 @@ public class ATMGUI {
     }
 
     // Method to show the login screen
+// Method to show the login screen
     private void showLoginScreen(JFrame frame) {
         JPanel loginPanel = new JPanel(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns
 
@@ -223,7 +239,8 @@ public class ATMGUI {
                     if (isValid) {
                         loggedInCardNumber = cardNumber; // Store logged-in card number
                         JOptionPane.showMessageDialog(frame, "Login successful! Welcome to your account.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        // Proceed to transactions or other functionalities (to be implemented)
+                        // Call the transaction menu method after successful login
+                        showTransactionMenu(frame);
                     } else {
                         JOptionPane.showMessageDialog(frame, "Invalid login details. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -237,4 +254,103 @@ public class ATMGUI {
         frame.revalidate();
         frame.repaint();
     }
+
+    private void showTransactionMenu(JFrame frame) {
+        JPanel transactionPanel = new JPanel(new GridLayout(4, 1, 10, 10)); // 4 rows, 1 column
+
+        // Create buttons for each transaction type
+        JButton viewBalanceButton = new JButton("1. View Balance");
+        JButton depositButton = new JButton("2. Deposit");
+        JButton withdrawButton = new JButton("3. Withdraw");
+
+        // Style buttons
+        viewBalanceButton.setFont(new Font("SansSerif", Font.BOLD, 16));
+        depositButton.setFont(new Font("SansSerif", Font.BOLD, 16));
+        withdrawButton.setFont(new Font("SansSerif", Font.BOLD, 16));
+
+        // Add buttons to the panel
+        transactionPanel.add(viewBalanceButton);
+        transactionPanel.add(depositButton);
+        transactionPanel.add(withdrawButton);
+
+        // Add action listeners for each transaction button
+
+        // View balance action
+        viewBalanceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (loggedInCardNumber == null) {
+                    JOptionPane.showMessageDialog(frame, "Please log in first.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                double balance = clientdata.getUserBalance(loggedInCardNumber); // Fetch balance from service
+                JOptionPane.showMessageDialog(frame, "Your balance is: R" + balance, "Balance", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+
+        // Deposit action
+        depositButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (loggedInCardNumber == null) {
+                    JOptionPane.showMessageDialog(frame, "Please log in first.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String depositAmountStr = JOptionPane.showInputDialog(frame, "Enter amount to deposit:", "Deposit", JOptionPane.PLAIN_MESSAGE);
+                if (depositAmountStr != null) {
+                    try {
+                        double depositAmount = Double.parseDouble(depositAmountStr);
+                        if (depositAmount <= 0) {
+                            JOptionPane.showMessageDialog(frame, "Please enter a positive amount.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        atmService.deposit(depositAmount); // Call deposit on ATMService
+                        double newBalance = clientdata.getUserBalance(loggedInCardNumber);
+                        JOptionPane.showMessageDialog(frame, "Deposit successful! Your new balance is: R" + newBalance, "Success", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(frame, "Invalid amount entered.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Withdraw action
+        withdrawButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (loggedInCardNumber == null) {
+                    JOptionPane.showMessageDialog(frame, "Please log in first.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String withdrawAmountStr = JOptionPane.showInputDialog(frame, "Enter amount to withdraw:", "Withdraw", JOptionPane.PLAIN_MESSAGE);
+                if (withdrawAmountStr != null) {
+                    try {
+                        double withdrawAmount = Double.parseDouble(withdrawAmountStr);
+                        if (withdrawAmount <= 0) {
+                            JOptionPane.showMessageDialog(frame, "Please enter a positive amount.", "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                        boolean success = atmService.withdraw(withdrawAmount); // Call withdraw on ATMService
+                        if (success) {
+                            double newBalance = clientdata.getUserBalance(loggedInCardNumber);
+                            JOptionPane.showMessageDialog(frame, "Withdrawal successful! Your new balance is: R" + newBalance, "Success", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(frame, "Insufficient funds.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(frame, "Invalid amount entered.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        // Add the transaction panel to the frame and display it
+        frame.getContentPane().removeAll(); // Clear the frame content
+        frame.add(transactionPanel);
+        frame.revalidate();
+        frame.repaint();
+    }
+
+
+
 }
