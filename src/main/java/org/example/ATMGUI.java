@@ -1,7 +1,6 @@
 package org.example;
 
 //package org.example;
-
 import org.example.Database.clientdata;
 
 import javax.swing.*;
@@ -136,46 +135,48 @@ public class ATMGUI {
         signupPanel.add(signupButton);
 
         // Add action listener to handle signup logic
-        signupButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String name = nameField.getText().trim();
-                String surname = surnameField.getText().trim();
-                String email = emailField.getText().trim();
-                String pin = new String(pinField.getPassword()).trim();
-                String verifyPin = new String(verifyPinField.getPassword()).trim();
+        signupButton.addActionListener(e -> {
+            String name = nameField.getText().trim();
+            String surname = surnameField.getText().trim();
+            String email = emailField.getText().trim();
+            String pin = new String(pinField.getPassword()).trim();
+            String verifyPin = new String(verifyPinField.getPassword()).trim();
 
-                // Perform signup validation and user creation logic
-                if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || pin.isEmpty() || verifyPin.isEmpty()) {
-                    JOptionPane.showMessageDialog(frame, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                if (!pin.equals(verifyPin)) {
-                    JOptionPane.showMessageDialog(frame, "PINs do not match. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                User user = new User();
-                user.setName(name);
-                user.setSurname(surname);
-                user.setEmail(email);
-                user.setPin(pin);
-                // Generate a card number (you may have your logic here)
-                String cardNumber = generateCardNumber();
-                user.setCardNumber(cardNumber);
-
-                // Add new user to the database
-                clientdata.createDatabase(user); // Assuming this method creates the user in the database
-
-                JOptionPane.showMessageDialog(frame, "Signup successful! Your card number is: " + cardNumber, "Success", JOptionPane.INFORMATION_MESSAGE);
-                showMainMenu(frame); // Return to the main menu
+            // Perform signup validation and user creation logic
+            if (name.isEmpty() || surname.isEmpty() || email.isEmpty() || pin.isEmpty() || verifyPin.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "All fields are required.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
+
+            if (!pin.equals(verifyPin)) {
+                JOptionPane.showMessageDialog(frame, "PINs do not match. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Ensure PIN is 4 digits long
+            if (pin.length() != 4 || !pin.matches("\\d+")) {
+                JOptionPane.showMessageDialog(frame, "PIN must be exactly 4 digits.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Create a User object with input data
+            User user = new User();
+            user.setName(name);
+            user.setSurname(surname);
+            user.setEmail(email);
+            user.setPin(pin);
+            // Generate a card number (you can modify this logic as needed)
+            String cardNumber = generateCardNumber();
+            user.setCardNumber(cardNumber);
+
+            // Add new user to the database
+            clientdata.createDatabase(user);  // Assuming this creates the user in the database
+
+            JOptionPane.showMessageDialog(frame, "Signup successful! Your card number is: " + cardNumber, "Success", JOptionPane.INFORMATION_MESSAGE);
+            showMainMenu(frame); // Return to the main menu
         });
 
-        // Set up the frame content for the signup screen
-        frame.getContentPane().removeAll(); // Clear the frame content
-        frame.add(signupPanel);
+        frame.setContentPane(signupPanel);
         frame.revalidate();
         frame.repaint();
     }

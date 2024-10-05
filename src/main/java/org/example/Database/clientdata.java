@@ -9,7 +9,7 @@
 //    private Connection conection;
 //
 //
-////    public static final String URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/Clientdata.db";
+ ////    public static final String URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/Clientdata.db";
 ////    private Connection connection;
 //
 //    public static void createTable(Statement stmt) throws SQLException {
@@ -128,6 +128,7 @@ import org.example.User;
 import java.sql.*;
 
 public class clientdata {
+
     public static final String URL = "jdbc:sqlite:Clientdata.db";
     private Connection connection;
 
@@ -150,8 +151,7 @@ public class clientdata {
 
     // Method to create the database and add a new client
     public static void createDatabase(User user) {
-        try (Connection connection = DriverManager.getConnection(URL);
-             Statement stmt = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(URL); Statement stmt = connection.createStatement()) {
 
             // Call the method to create the table
             createTable(stmt);
@@ -169,8 +169,7 @@ public class clientdata {
     public static void addClients(User user) {
         String sql = "INSERT INTO CLIENTDATA (NAME, SURNAME, EMAIL, PIN, CARDNUMBER, BALANCE) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(URL);
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(URL); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             pstmt.setString(1, user.getName());
             pstmt.setString(2, user.getSurname());
@@ -191,8 +190,7 @@ public class clientdata {
     public static double getUserBalance(String cardNumber) {
         String sql = "SELECT BALANCE FROM CLIENTDATA WHERE CARDNUMBER = ?";
 
-        try (Connection connection = DriverManager.getConnection(URL);
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(URL); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             pstmt.setString(1, cardNumber);
 
@@ -215,8 +213,7 @@ public class clientdata {
     public static void updateUserBalance(String cardNumber, double newBalance) {
         String sql = "UPDATE CLIENTDATA SET BALANCE = ? WHERE CARDNUMBER = ?";
 
-        try (Connection connection = DriverManager.getConnection(URL);
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(URL); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             pstmt.setDouble(1, newBalance);
             pstmt.setString(2, cardNumber);
@@ -238,8 +235,7 @@ public class clientdata {
     public static boolean isValidLogin(String cardNumber, String pin) {
         String sql = "SELECT EMAIL, BALANCE FROM CLIENTDATA WHERE CARDNUMBER = ? AND PIN = ?";
 
-        try (Connection connection = DriverManager.getConnection(URL);
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(URL); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             pstmt.setString(1, cardNumber);  // Set the card number parameter
             pstmt.setString(2, pin);         // Set the pin parameter
@@ -264,4 +260,3 @@ public class clientdata {
         }
     }
 }
-

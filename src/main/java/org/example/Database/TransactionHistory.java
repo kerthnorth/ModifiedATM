@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TransactionHistory {
+
     public static final String URL = "jdbc:sqlite:Clientdata.db";
 
     // Method to create the TRANSACTION_HISTORY table
@@ -19,8 +20,7 @@ public class TransactionHistory {
         );
         """;
 
-        try (Connection connection = DriverManager.getConnection(URL);
-             Statement stmt = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(URL); Statement stmt = connection.createStatement()) {
 
             stmt.execute(createTableSQL);
             System.out.println("Table 'TRANSACTION_HISTORY' has been created or already exists.");
@@ -37,8 +37,7 @@ public class TransactionHistory {
 
         String sql = "INSERT INTO TRANSACTION_HISTORY (CARDNUMBER, TRANSACTION_TYPE, AMOUNT, DATE_TIME) VALUES (?, ?, ?, ?)";
 
-        try (Connection connection = DriverManager.getConnection(URL);
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(URL); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             String dateTime = dtf.format(LocalDateTime.now());  // Get the current date and time
@@ -61,8 +60,7 @@ public class TransactionHistory {
     public static void getTransactionHistory(String cardNumber) {
         String sql = "SELECT TRANSACTION_TYPE, AMOUNT, DATE_TIME FROM TRANSACTION_HISTORY WHERE CARDNUMBER = ? ORDER BY DATE_TIME DESC";
 
-        try (Connection connection = DriverManager.getConnection(URL);
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(URL); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             pstmt.setString(1, cardNumber);  // Set the card number parameter
 
