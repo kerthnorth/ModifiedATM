@@ -1,8 +1,9 @@
 package org.example;
 
-//package org.example;
+import org.example.Database.TransactionHistory;
 import org.example.Database.clientdata;
 
+import javax.print.DocFlavor.URL;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,13 +14,24 @@ public class ATMGUI {
     private String loggedInCardNumber;
     public ATMService atmService;
     static Transaction deposit = new Transaction();
+    // private ATMService atmService;
+    private String cardNumber;  // User's card number
+    private JFrame frame;
+    private JLabel balanceLabel;
+    private double balance;
+    private StringBuilder transactionHistory = new StringBuilder();
+    // private String cardNumber; // Add card number to identify the user
 
-    public ATMGUI() {
+    // public ATMGUI(String cardNumber) {
+    //     this.cardNumber = cardNumber;
+    //     this.balance = clientdata.getUserBalance(cardNumber); // Get initial balance from DB
+    // }
+    public ATMGUI(ATMService atmService) {
+        this.atmService = atmService; // Initialize ATMService
         // Create the frame for the ATM GUI
-//        this.atmService = atmService;
         JFrame frame = new JFrame("ATM - NUMETRO BANK");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(800, 800);
         frame.setLocationRelativeTo(null); // Center the window
 
         // Call the method to display the main menu
@@ -31,8 +43,36 @@ public class ATMGUI {
         // Create the main panel with a BorderLayout
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.setBackground(new Color(50, 50, 50)); // Dark background for a modern look
+        // Prussian Blue: new Color(0, 49, 83) or new Color(0x003153)
+        panel.setBackground(new Color(56, 86, 117)); // Dark background for a modern look
 
+        // Load the logo image
+        ImageIcon logoIcon;
+        java.net.URL logoUrl = getClass().getResource("/org/example/numetro_logo.png");
+
+        if (logoUrl != null) {
+            logoIcon = new ImageIcon(logoUrl);
+
+            // Scale the image to the desired size, e.g., 100x100 pixels
+            Image logoImage = logoIcon.getImage(); // Get the original image
+            Image scaledLogoImage = logoImage.getScaledInstance(400, 300, Image.SCALE_SMOOTH); // Resize
+            logoIcon = new ImageIcon(scaledLogoImage); // Create a new ImageIcon with the scaled image
+        } else {
+            // Fallback message or icon if the logo file is missing
+            logoIcon = new ImageIcon(); // Empty icon
+            System.err.println("Warning: Logo image file not found in package 'org.example'");
+        }
+
+        // Create the label and add the logo or placeholder text
+        JLabel logoLabel = new JLabel(logoIcon);
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center the logo
+
+        // Optional: Display a placeholder text if image is missing
+        if (logoIcon.getIconWidth() == -1) {
+            logoLabel.setText("Logo unavailable");
+            logoLabel.setForeground(Color.RED); // Red text to indicate error
+            logoLabel.setFont(new Font("SansSerif", Font.BOLD, 16)); // Styling for placeholder text
+        }
         // Create and style the welcome label
         JLabel welcomeLabel = new JLabel("Welcome To NUMETRO BANK!", SwingConstants.CENTER);
         welcomeLabel.setFont(new Font("Serif", Font.BOLD, 24)); // Bold, elegant font
@@ -46,8 +86,8 @@ public class ATMGUI {
 
         // Create a panel for the main menu buttons
         JPanel menuPanel = new JPanel();
-        menuPanel.setLayout(new GridLayout(5, 1, 10, 10)); // 5 rows, 1 column, with gaps between buttons
-        menuPanel.setBackground(new Color(50, 50, 50)); // Same background color
+        menuPanel.setLayout(new GridLayout(4, 1, 10, 10)); // 4 rows, 1 column, with gaps between buttons
+        menuPanel.setBackground(new Color(56, 86, 117)); // Same background color
 
         // Add buttons for each menu option
         JButton loginButton = new JButton("1. Login");
@@ -82,6 +122,7 @@ public class ATMGUI {
                 showSignupScreen(frame); // Show the signup screen
             }
         });
+
         // Add action listener for transactions button
         transactionsButton.addActionListener(new ActionListener() {
             @Override
@@ -94,7 +135,7 @@ public class ATMGUI {
             }
         });
 
-
+        // Add action listener for exit button
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -103,10 +144,18 @@ public class ATMGUI {
             }
         });
 
-        // Add components to the main panel
-        panel.add(welcomeLabel, BorderLayout.NORTH);
-        panel.add(taglineLabel, BorderLayout.CENTER);
-        panel.add(menuPanel, BorderLayout.SOUTH);
+        // Organize components in their respective positions
+        panel.add(logoLabel, BorderLayout.NORTH);               // Logo at the top
+        panel.add(welcomeLabel, BorderLayout.CENTER);           // Welcome message in the center
+
+        // Add tagline and menuPanel to a separate container to place them in the SOUTH
+        JPanel southPanel = new JPanel(new BorderLayout());
+        southPanel.setBackground(new Color(56, 86, 117));        // Match background color
+        southPanel.add(taglineLabel, BorderLayout.NORTH);       // Tagline above buttons
+        southPanel.add(menuPanel, BorderLayout.CENTER);         // Menu panel below tagline
+
+        // Add the southPanel to the SOUTH of the main panel
+        panel.add(southPanel, BorderLayout.SOUTH);
 
         // Add the panel to the frame and make it visible
         frame.getContentPane().removeAll(); // Clear the frame content
@@ -115,8 +164,8 @@ public class ATMGUI {
         frame.repaint();
         frame.setVisible(true);
     }
-
     // Method to show the signup screen
+
     private void showSignupScreen(JFrame frame) {
         JPanel signupPanel = new JPanel(new GridLayout(6, 2, 10, 10)); // 6 rows, 2 columns
 
@@ -274,7 +323,6 @@ public class ATMGUI {
         transactionPanel.add(withdrawButton);
 
         // Add action listeners for each transaction button
-
         // View balance action
         viewBalanceButton.addActionListener(new ActionListener() {
             @Override
@@ -296,17 +344,24 @@ public class ATMGUI {
                     JOptionPane.showMessageDialog(frame, "Please log in first.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
+
                 String depositAmountStr = JOptionPane.showInputDialog(frame, "Enter amount to deposit:", "Deposit", JOptionPane.PLAIN_MESSAGE);
                 if (depositAmountStr != null) {
                     try {
                         double depositAmount = Double.parseDouble(depositAmountStr);
+
                         if (depositAmount <= 0) {
                             JOptionPane.showMessageDialog(frame, "Please enter a positive amount.", "Error", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
-                        atmService.deposit(depositAmount); // Call deposit on ATMService
-                        double newBalance = clientdata.getUserBalance(loggedInCardNumber);
+
+                        // Perform the deposit through ATMService
+                        atmService.deposit(depositAmount, loggedInCardNumber); // Pass the card number and amount for deposit
+
+                        // Fetch and display the updated balance
+                        double newBalance = atmService.getBalance();  // Fetch the updated balance from ATMService
                         JOptionPane.showMessageDialog(frame, "Deposit successful! Your new balance is: R" + newBalance, "Success", JOptionPane.INFORMATION_MESSAGE);
+
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(frame, "Invalid amount entered.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -330,7 +385,7 @@ public class ATMGUI {
                             JOptionPane.showMessageDialog(frame, "Please enter a positive amount.", "Error", JOptionPane.ERROR_MESSAGE);
                             return;
                         }
-                        boolean success = atmService.withdraw(withdrawAmount); // Call withdraw on ATMService
+                        boolean success = atmService.withdraw(withdrawAmount, loggedInCardNumber); // Pass the card number for withdrawal
                         if (success) {
                             double newBalance = clientdata.getUserBalance(loggedInCardNumber);
                             JOptionPane.showMessageDialog(frame, "Withdrawal successful! Your new balance is: R" + newBalance, "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -344,13 +399,10 @@ public class ATMGUI {
             }
         });
 
-        // Add the transaction panel to the frame and display it
+        // Set up the transaction panel on the frame
         frame.getContentPane().removeAll(); // Clear the frame content
         frame.add(transactionPanel);
         frame.revalidate();
         frame.repaint();
     }
-
-
-
 }

@@ -1,5 +1,5 @@
 //package org.example;////package org.example;
-//////
+ //////
 //////import org.example.Database.clientdata;
 //////
 //////import java.util.Scanner;
@@ -380,12 +380,13 @@
 //
 package org.example;
 
-import org.example.Database.clientdata;
-
 import java.util.Scanner;
 
+import org.example.Database.clientdata;
+
 public class ATMMenu {
-    public ATMService atmService; // Initialize this later after login
+
+    private ATMService atmService; // Initialize this later after login
     private boolean isLoggedIn = false;
     private String loggedInCardNumber = null;
     static Transaction deposit = new Transaction();// Store the card number of the logged-in user
@@ -471,14 +472,14 @@ public class ATMMenu {
                     // Deposit logic
                     System.out.print("Enter the amount to deposit: ");
                     double depositAmount = scanner.nextDouble();
-                    atmService.deposit(depositAmount);  // Deposit to the logged-in account
+                    atmService.deposit(depositAmount, loggedInCardNumber);  // Deposit to the logged-in account
                     System.out.println("Deposit successful! Your new balance is: " + clientdata.getUserBalance(loggedInCardNumber));
                     break;
                 case 2:
                     // Withdraw logic
                     System.out.print("Enter the amount to withdraw: ");
                     double withdrawAmount = scanner.nextDouble();
-                    if (atmService.withdraw(withdrawAmount)) {
+                    if (atmService.withdraw(withdrawAmount, loggedInCardNumber)) {
                         System.out.println("Withdrawal successful! Your new balance is: " + clientdata.getUserBalance(loggedInCardNumber));
                     } else {
                         System.out.println("Insufficient funds.");
@@ -509,14 +510,5 @@ public class ATMMenu {
             scanner.next();
         }
         return scanner.nextInt();
-    }
-
-    public ATMService getATMService() {
-
-        return atmService;
-    }
-
-    public boolean isLoggedIn() {
-        return isLoggedIn;
     }
 }

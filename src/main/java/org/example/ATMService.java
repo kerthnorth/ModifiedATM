@@ -54,6 +54,7 @@ import org.example.Database.TransactionHistory;
 import org.example.Database.clientdata;
 
 public class ATMService {
+
     private double balance;
     private StringBuilder transactionHistory = new StringBuilder();
     private String cardNumber; // Add card number to identify the user
@@ -71,7 +72,7 @@ public class ATMService {
         return transactionHistory.toString();
     }
 
-    public void deposit(double amount) {
+    public void deposit(double amount, String cardNumber) {
         if (amount > 0) {
             balance += amount;
             transactionHistory.append("Deposited: ").append(amount).append("\n");
@@ -87,7 +88,7 @@ public class ATMService {
         }
     }
 
-    public boolean withdraw(double amount) {
+    public boolean withdraw(double amount, String cardNumber) {
         if (amount > 0 && amount <= balance) {
             balance -= amount;
             transactionHistory.append("Withdrew: ").append(amount).append("\n");
@@ -108,9 +109,8 @@ public class ATMService {
     public void checkBalance() {
         System.out.println("Your current balance is: " + balance);
     }
+
     public void showTransactionHistory() {
         TransactionHistory.getTransactionHistory(cardNumber);
     }
 }
-
-
