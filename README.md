@@ -22,7 +22,7 @@ The ATM GUI Application simulates an ATM interface, allowing users to log in, si
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/atm-gui.git
+   git clone https://github.com/kerthnorth/ModifiedATM.git
    cd atm-gui
    ```
 
