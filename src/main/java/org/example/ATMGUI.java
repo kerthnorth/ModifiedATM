@@ -1,52 +1,60 @@
+package org.example;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.regex.Pattern;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-public class ATMSystem {
+public class ATMGUI {
 
+    private String loggedInCardNumber;
     private ATMService atmService;
+    private JFrame frame;
 
-    public ATMSystem() {
-        atmService = new ATMService(); // Initialize ATMService
+    public ATMGUI(ATMService atmService) {
+        this.atmService = atmService;
+        frame = new JFrame("ATM - NUMETRO BANK");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 800);
+        frame.setLocationRelativeTo(null);
+
+        showMainMenu();
     }
 
-    public static void main(String[] args) {
-        ATMSystem atmSystem = new ATMSystem();
-        JFrame frame = new JFrame("ATM System");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        atmSystem.showMainMenu(frame);
+    private void showScreen(JPanel panel) {
+        frame.setContentPane(panel);
+        frame.revalidate();
+        frame.repaint();
         frame.setVisible(true);
     }
 
-    private void showMainMenu(JFrame frame) {
-        // ...
-        // Code for showing the main menu
-        // ...
+    public void showMainMenu() {
+        MainMenuPanel mainMenuPanel = new MainMenuPanel(this);
+        showScreen(mainMenuPanel.getPanel());
     }
 
-    // Other methods for signup, login, and transaction functionalities
-    // ...
+    public void showSignupScreen() {
+        SignupScreen signupScreen = new SignupScreen(this);
+        showScreen(signupScreen.getPanel());
+    }
+
+    public void showLoginScreen() {
+        LoginScreen loginScreen = new LoginScreen(this);
+        showScreen(loginScreen.getPanel());
+    }
+
+    public void showTransactionMenu() {
+        TransactionMenu transactionMenu = new TransactionMenu(this, atmService, loggedInCardNumber);
+        showScreen(transactionMenu.getPanel());
+    }
+
+    public JFrame getFrame() {
+        return frame;
+    }
+
+    public void setLoggedInCardNumber(String cardNumber) {
+        this.loggedInCardNumber = cardNumber;
+    }
+
+    public String getLoggedInCardNumber() {
+        return loggedInCardNumber;
+    }
 }
-
-class User {
-
-    private String name;
-    private String surname;
-    private String email;
-    private String pin;
-    private String cardNumber;
-
-    // Getters and setters for user properties
-    // ...
-}
-
-class ATMService {
-    // ...
-    // Code for ATM service functionalities
-    // ...
-}
-
-// Other classes and interfaces
-// ...
