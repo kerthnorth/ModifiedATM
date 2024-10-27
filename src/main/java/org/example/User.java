@@ -3,35 +3,33 @@ package org.example;
 import java.util.Random;
 
 public class User {
+
     public String name;
     public String surname;
     public String email;
-    public String cardNumber; // Change to String
+    public String cardNumber;
     public String pin;
     public boolean balance;
     public String transactionHistory;
     public String verifypin;
     int cardNumberLength = 9;
 
-    // Generate the card number when the User object is created
     public User() {
-        this.cardNumber = generateCardNumber(cardNumberLength); // Directly store as String
+        this.cardNumber = generateCardNumber(cardNumberLength);
     }
 
-    // Generate a random card number
     public String generateCardNumber(int length) {
         Random random = new Random();
         StringBuilder cardnumber = new StringBuilder();
 
         for (int i = 0; i < length; i++) {
-            int digit = random.nextInt(10); // Generates a random digit between 0 and 9
+            int digit = random.nextInt(10);
             cardnumber.append(digit);
         }
 
         return cardnumber.toString();
     }
 
-    // Getter and setter methods
     public String getVerifypin() {
         return verifypin;
     }
@@ -40,11 +38,11 @@ public class User {
         this.verifypin = verifypin;
     }
 
-    public String getCardNumber() { // Update return type to String
+    public String getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(String cardNumber) { // Update parameter type to String
+    public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
     }
 
@@ -98,6 +96,6 @@ public class User {
 
     public String getUserDetails() {
         return String.format("Name: %s\nSurname: %s\nEmail: %s\nPIN: %s\nCard Number: %s",
-                name, surname, email, pin, cardNumber); // Update format specifier for cardNumber
+                name, surname, email, pin, cardNumber);
     }
 }

@@ -122,7 +122,6 @@ public class clientdata {
             BALANCE REAL DEFAULT 0.0 -- Add balance with default value
         );
         """;
-        // Execute the SQL statement to create the table
         stmt.execute(createTableSQL);
         System.out.println("Table 'CLIENTDATA' has been created or already exists.");
     }

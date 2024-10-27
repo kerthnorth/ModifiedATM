@@ -3,10 +3,9 @@ package org.example;
 import java.util.Scanner;
 
 public class Signup {
+
     static Scanner sc = new Scanner(System.in);
     static User b = new User();
-
-
 
     public User start() {
         System.out.println("Welcome to the Banking system");
@@ -51,7 +50,6 @@ public class Signup {
             }
         }
 
-
         String pin;
         while (true) {
             System.out.println("Set a 4-digit pin number: ");
@@ -80,13 +78,10 @@ public class Signup {
 
             verifypin = sc.nextLine();
             if (verifypin.equals(pin)) {
-                System.out.println("Welcome To Numetro Bank"+ " " +user.name +" "+ user.surname + "!");
+                System.out.println("Welcome To Numetro Bank" + " " + user.name + " " + user.surname + "!");
                 System.out.println("Your card number is:" + user.getCardNumber());
 
-
-
                 // b.setVerifypin(Integer.parseInt(verifypin));
-
 //                System.out.println("Welcome To Numetro Bank"+ " " +user.name +" "+ user.surname + "!");
 //                System.out.println("Your card number is:" + user.getCardNumber());
                 break;
@@ -95,56 +90,3 @@ public class Signup {
         return user;
     }
 }
-// In Signup.java
-//package org.example;
-//
-//import java.util.Scanner;
-//
-//public class Signup {
-//    static Scanner sc = new Scanner(System.in);
-//
-//    // Method for GUI input - takes user data as parameters
-//    public User startSignupWithParams(String name, String surname, String email, String pin) {
-//        User user = new User();
-//        user.setName(name);
-//        user.setSurname(surname);
-//        user.setEmail(email);
-//        user.setPin(pin);
-//
-//        System.out.println("Please re-enter your pin for verification:");
-//
-//        // Normally, you would want to handle this in the GUI as well, but keeping the re-verification logic
-//        String verifypin = sc.nextLine(); // This can also be prompted in GUI if needed
-//        while (!verifypin.equals(pin)) {
-//            System.out.println("Your pin did not match. Please try again:");
-//            verifypin = sc.nextLine();
-//        }
-//
-//        System.out.println("Welcome to Numetro Bank, " + user.getName() + " " + user.getSurname() + "!");
-//        System.out.println("Your card number is: " + user.getCardNumber());
-//
-//        return user;  // Return the user object after signup
-//    }
-//
-//    // Existing start method (for console input)
-//    public User start() {
-//        User user = new User();
-//
-//        // The original input collection logic using Scanner remains here
-//        System.out.println("Welcome to the Banking system");
-//
-//        while (true) {
-//            System.out.println("Enter your name:");
-//            String name = sc.nextLine().trim();
-//            if (!name.isEmpty()) {
-//                user.setName(name);
-//                break;
-//            }
-//            System.out.println("Name cannot be empty. Please try again.");
-//        }
-//
-//        // Collect surname, email, pin, etc. as before...
-//
-//        return user; // After all inputs and validation
-//    }
-//}

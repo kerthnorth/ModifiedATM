@@ -30,7 +30,6 @@ public class UIHelper {
         JLabel logoLabel = new JLabel(logoIcon);
         logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Match the background color with the LoginScreen
         logoLabel.setOpaque(true);
         logoLabel.setBackground(new Color(50, 86, 120));
 

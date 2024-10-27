@@ -51,7 +51,6 @@ public class SignupScreen {
 
     private boolean validateFields(JTextField nameField, JTextField surnameField, JTextField emailField,
             JPasswordField pinField, JPasswordField verifyPinField, ATMGUI atmGui) {
-        // Validation logic
         return true;
     }
 

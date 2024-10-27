@@ -35,9 +35,7 @@ public class TransactionHistory {
         }
     }
 
-    // Method to log a transaction (deposit or withdrawal) for a specific user
     public static void logTransaction(String cardNumber, String transactionType, double amount) {
-        // Ensure the table exists before logging the transaction
         createTransactionTable();
 
         String sql = "INSERT INTO TRANSACTION_HISTORY (CARDNUMBER, TRANSACTION_TYPE, AMOUNT, DATE_TIME) VALUES (?, ?, ?, ?)";
@@ -45,12 +43,12 @@ public class TransactionHistory {
         try (Connection connection = DriverManager.getConnection(URL); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            String dateTime = dtf.format(LocalDateTime.now());  // Get the current date and time
+            String dateTime = dtf.format(LocalDateTime.now());
 
-            pstmt.setString(1, cardNumber);           // User's card number
-            pstmt.setString(2, transactionType);      // Transaction type (Deposit/Withdrawal)
-            pstmt.setDouble(3, amount);               // Transaction amount
-            pstmt.setString(4, dateTime);             // Date and time of the transaction
+            pstmt.setString(1, cardNumber);
+            pstmt.setString(2, transactionType);
+            pstmt.setDouble(3, amount);
+            pstmt.setString(4, dateTime);
 
             pstmt.executeUpdate();
             System.out.println("Transaction logged: " + transactionType + " of $" + amount + " at " + dateTime);
@@ -61,13 +59,12 @@ public class TransactionHistory {
         }
     }
 
-    // Method to retrieve transaction history for a specific user
     public static void getTransactionHistory(String cardNumber) {
         String sql = "SELECT TRANSACTION_TYPE, AMOUNT, DATE_TIME FROM TRANSACTION_HISTORY WHERE CARDNUMBER = ? ORDER BY DATE_TIME DESC";
 
         try (Connection connection = DriverManager.getConnection(URL); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
-            pstmt.setString(1, cardNumber);  // Set the card number parameter
+            pstmt.setString(1, cardNumber);
 
             ResultSet rs = pstmt.executeQuery();
 
