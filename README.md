@@ -1,17 +1,19 @@
-
 ## ATM GUI Application
 
 ### Overview
 
-The ATM GUI Application simulates an ATM interface, allowing users to log in, sign up, view transaction options, and manage their bank accounts in a user-friendly graphical environment. The application includes a graphical main menu with options for logging in, signing up, viewing transactions, and exiting the program.
+The ATM GUI Application simulates an ATM interface, allowing users to log in, sign up, view transaction options, and manage their bank accounts in a user-friendly graphical environment.
 
 ### Features
 
 - **Main Menu**: The main entry point for navigation, offering options to log in, sign up, access transactions, or exit.
+![Main Menu](src/main/java/resources/images/homescreen.png)
 - **Login Screen**: Users can securely log in using their card number and PIN.
+![Main Menu](src/main/java/resources/images/login.png)
 - **Signup Screen**: New users can sign up with personal details and create a secure PIN.
+![Main Menu](src/main/java/resources/images/signup.png)
 - **Transaction Menu**: After logging in, users can perform account-related actions like viewing their balance, depositing funds, and withdrawing funds.
-- **Error Handling**: Error messages display for invalid login attempts, insufficient funds, and other cases, ensuring smooth user experience.
+  ![Transaction Menu Screenshot](src/main/java/resources/images/deposit.png)
 
 ### Prerequisites
 
